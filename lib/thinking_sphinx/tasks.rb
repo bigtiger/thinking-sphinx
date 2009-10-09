@@ -110,6 +110,18 @@ namespace :thinking_sphinx do
       :max_priority => ENV['MAX_PRIORITY']
     ).start
   end
+
+  namespace :test do
+    desc "Prepares test environment to allow integration testing"
+    task :prepare => :environment do
+      env = ENV['RAILS_ENV']
+      ThinkingSphinx::Configuration.send(:class_variable_set, :@@environment, 'test')
+      Rake::Task["thinking_sphinx:stop"].invoke
+      Rake::Task["thinking_sphinx:index"].invoke
+      Rake::Task["thinking_sphinx:start"].invoke
+      ThinkingSphinx::Configuration.send(:class_variable_set, :@@environment, env)
+    end
+  end
 end
 
 namespace :ts do
